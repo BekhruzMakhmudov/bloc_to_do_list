@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'to_do_item_model.dart';
+part of 'to_do_item.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -22,7 +22,7 @@ class ToDoItemAdapter extends TypeAdapter<ToDoItem> {
       description: fields[2] as String,
       isCompleted: fields[3] as bool,
       dateTime: fields[4] as DateTime,
-      priority: fields[5] as String,
+      priority: fields[5] as Priority,
     );
   }
 

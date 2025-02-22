@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../data/models/priority.dart';
 import '../../domain/entities/to_do_item.dart';
 import 'package:uuid/uuid.dart';
 
@@ -15,7 +16,7 @@ class _AddToDoItemScreenState extends State<AddToDoItemScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  String _selectedPriority = "Medium";
+  Priority _selectedPriority = Priority.medium;
 
   @override
   Widget build(BuildContext context) {
@@ -57,19 +58,20 @@ class _AddToDoItemScreenState extends State<AddToDoItemScreen> {
                     style: TextStyle(fontSize: 16),
                   ),
                   const SizedBox(width: 16),
-                  DropdownButton<String>(
+                  DropdownButton<Priority>(
                     value: _selectedPriority,
-                    onChanged: (String? newValue) {
+                    onChanged: (Priority? newValue) {
                       setState(() {
-                        _selectedPriority = newValue ?? "Medium";
+                        _selectedPriority = newValue ?? Priority.medium;
                       });
                     },
-                    items: <String>["High", "Medium", "Low"]
-                        .map<DropdownMenuItem<String>>(
-                            (String value) => DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                ))
+                    items: Priority.values
+                        .map<DropdownMenuItem<Priority>>(
+                          (Priority value) => DropdownMenuItem<Priority>(
+                            value: value,
+                            child: Text(value.toString().split('.').last),
+                          ),
+                        )
                         .toList(),
                   ),
                 ],

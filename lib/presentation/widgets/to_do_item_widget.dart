@@ -37,7 +37,7 @@ class ToDoItemWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Priority: ${toDoItem.priority}"),
+                Text("Priority: ${toDoItem.priority.toString().split('.').last}"),
                 Text(getFormattedDate(toDoItem.dateTime)),
               ],
             ),

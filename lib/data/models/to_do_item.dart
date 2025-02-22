@@ -1,6 +1,7 @@
+import 'package:bloc_to_do_list/data/models/priority.dart';
 import 'package:hive/hive.dart';
 
-part 'to_do_item_model.g.dart';
+part 'to_do_item.g.dart';
 
 @HiveType(typeId: 0)
 class ToDoItem {
@@ -20,7 +21,7 @@ class ToDoItem {
   final DateTime dateTime;
 
   @HiveField(5)
-  final String priority;
+  final Priority priority;
 
   ToDoItem({
     required this.id,
@@ -36,7 +37,7 @@ class ToDoItem {
     String? description,
     bool? isCompleted,
     DateTime? dateTime,
-    String? priority,
+    Priority? priority,
   }) {
     return ToDoItem(
       id: id,

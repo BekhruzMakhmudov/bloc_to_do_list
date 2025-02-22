@@ -1,10 +1,12 @@
+import '../../data/models/priority.dart';
+
 class ToDoItem {
   final String id;
   final String title;
   final String description;
   final bool isCompleted;
   final DateTime dateTime;
-  final String priority;
+  final Priority priority;
 
   ToDoItem({
     required this.id,
