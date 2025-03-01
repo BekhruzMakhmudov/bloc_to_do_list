@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../domain/entities/category.dart';
 import '../../domain/entities/priority.dart';
 import '../../domain/entities/todo.dart';
 import '../bloc/todo_bloc.dart';
@@ -21,25 +22,22 @@ class AddTodoPage extends StatefulWidget {
 
 class _AddTodoPageState extends State<AddTodoPage> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _titleController;
   late final TextEditingController _descriptionController;
+  late Category _selectedCategory;
   late Priority _selectedPriority;
 
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(
-      text: widget.todo?.title,
-    );
     _descriptionController = TextEditingController(
       text: widget.todo?.description,
     );
+    _selectedCategory = widget.todo?.category ?? Category.other;
     _selectedPriority = widget.todo?.priority ?? Priority.medium;
   }
 
   @override
   void dispose() {
-    _titleController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
@@ -68,23 +66,58 @@ class _AddTodoPageState extends State<AddTodoPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextInput(controller: _titleController, label: 'Title'),
-              const SizedBox(height: 16),
               TextInput(
-                  controller: _descriptionController, label: 'Description'),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Priority:',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(width: 8),
-                    _buildDropDownMenu(),
-                  ],
-                ),
+                controller: _descriptionController,
+                label: 'Description',
+              ),
+              _buildDropDownMenu(
+                label: 'Category:',
+                selected: _selectedCategory,
+                onChanged: (Category? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedCategory = newValue;
+                    });
+                  }
+                },
+                items: Category.values.skip(1)
+                    .map(
+                      (item) => DropdownMenuItem<Category>(
+                        value: item,
+                        child: Row(
+                          children: [
+                            Icon(item.icon),
+                            SizedBox(width: 4),
+                            Text(item.name),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+              _buildDropDownMenu(
+                label: 'Priority:',
+                selected: _selectedPriority,
+                onChanged: (Priority? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedPriority = newValue;
+                    });
+                  }
+                },
+                items: Priority.values
+                    .map(
+                      (item) => DropdownMenuItem<Priority>(
+                        value: item,
+                        child: Text(
+                          item.name,
+                          style: TextStyle(
+                            color: item.color,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
               Center(
                 child: _buildSubmitButton(),
@@ -96,28 +129,29 @@ class _AddTodoPageState extends State<AddTodoPage> {
     );
   }
 
-  _buildDropDownMenu() {
-    return DropdownButton<Priority>(
-      value: _selectedPriority,
-      onChanged: (Priority? newValue) {
-        if (newValue != null) {
-          setState(() {
-            _selectedPriority = newValue;
-          });
-        }
-      },
-      items:
-          Priority.values.map<DropdownMenuItem<Priority>>((Priority priority) {
-        return DropdownMenuItem<Priority>(
-          value: priority,
-          child: Text(
-            priority.name,
-            style: TextStyle(
-              color: priority.color,
-            ),
+  _buildDropDownMenu<T>({
+    required String label,
+    required T selected,
+    required ValueChanged<T?> onChanged,
+    List<DropdownMenuItem<T>>? items,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 16),
           ),
-        );
-      }).toList(),
+          SizedBox(width: 8),
+          DropdownButton<T>(
+            value: selected,
+            onChanged: onChanged,
+            items: items,
+          ),
+        ],
+      ),
     );
   }
 
@@ -125,25 +159,28 @@ class _AddTodoPageState extends State<AddTodoPage> {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          final title = _titleController.text;
           final description = _descriptionController.text;
+          final Todo newTodo;
           if (widget.todo == null) {
-            final newTodo = Todo(
+            newTodo = Todo(
               id: const Uuid().v4(),
-              title: title,
+              category: _selectedCategory,
               description: description,
               createdAt: DateTime.now(),
               priority: _selectedPriority,
             );
-            context.read<TodoBloc>().add(AddTodoEvent(todo: newTodo));
           } else {
-            final updatedTodo = widget.todo!.copyWith(
-              title: title,
+            newTodo = widget.todo!.copyWith(
+              category: _selectedCategory,
               description: description,
               priority: _selectedPriority,
             );
-            context.read<TodoBloc>().add(AddTodoEvent(todo: updatedTodo));
           }
+          context.read<TodoBloc>().add(AddTodoEvent(todo: newTodo));
+          context.read<TodoBloc>().add(GetTodosEvent(
+                category: _selectedCategory,
+                showHistory: newTodo.isCompleted,
+              ));
           Navigator.of(context).pop();
         }
       },

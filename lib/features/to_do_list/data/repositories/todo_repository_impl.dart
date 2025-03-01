@@ -15,12 +15,6 @@ class TodoRepositoryImpl implements TodoRepository {
   }
 
   @override
-  Future<Todo> getTodoById(String id) async {
-    final todoModel = await localDataSource.getTodoById(id);
-    return todoModel.toEntity();
-  }
-
-  @override
   Future<void> addTodo(Todo todo) async {
     final todoModel = TodoModel.fromEntity(todo);
     await localDataSource.addTodo(todoModel);

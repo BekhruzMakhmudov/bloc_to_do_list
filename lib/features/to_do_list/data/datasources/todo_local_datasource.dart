@@ -4,7 +4,6 @@ import '../models/todo_model.dart';
 
 abstract class TodoLocalDataSource {
   Future<List<TodoModel>> getTodos();
-  Future<TodoModel> getTodoById(String id);
   Future<void> addTodo(TodoModel todo);
   Future<void> deleteTodo(String id);
 }
@@ -17,15 +16,6 @@ class TodoLocalDataSourceImpl implements TodoLocalDataSource {
   @override
   Future<List<TodoModel>> getTodos() async {
     return todoBox.values.toList();
-  }
-
-  @override
-  Future<TodoModel> getTodoById(String id) async {
-    final todo = todoBox.get(id);
-    if (todo == null) {
-      throw Exception('Todo not found');
-    }
-    return todo;
   }
 
   @override

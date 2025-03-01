@@ -1,8 +1,9 @@
+import 'package:bloc_to_do_list/features/to_do_list/domain/entities/category.dart';
 import 'package:bloc_to_do_list/features/to_do_list/domain/entities/priority.dart';
 
 class Todo {
   final String id;
-  final String title;
+  final Category category;
   final String description;
   final bool isCompleted;
   final DateTime createdAt;
@@ -10,7 +11,7 @@ class Todo {
 
   Todo({
     required this.id,
-    required this.title,
+    required this.category,
     required this.description,
     this.isCompleted = false,
     required this.createdAt,
@@ -19,7 +20,7 @@ class Todo {
 
   Todo copyWith({
     String? id,
-    String? title,
+    Category? category,
     String? description,
     bool? isCompleted,
     DateTime? createdAt,
@@ -27,7 +28,7 @@ class Todo {
   }) {
     return Todo(
       id: id ?? this.id,
-      title: title ?? this.title,
+      category: category ?? this.category,
       description: description ?? this.description,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,

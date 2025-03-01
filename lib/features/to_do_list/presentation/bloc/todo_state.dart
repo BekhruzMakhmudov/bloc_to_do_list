@@ -1,35 +1,25 @@
 part of 'todo_bloc.dart';
 
-enum TodoFilter { all, active, completed }
-
 abstract class TodoState {}
-
-class TodoInitial extends TodoState {}
 
 class TodoLoading extends TodoState {}
 
 class TodosLoaded extends TodoState {
   final List<Todo> todos;
-  final TodoFilter filter;
+  final bool showHistory;
+  final Category category;
 
-  TodosLoaded({required this.todos, this.filter = TodoFilter.all});
+  TodosLoaded({
+    required this.todos,
+    required this.showHistory,
+    required this.category
+  });
 
   List<Todo> get filteredTodos {
-    switch (filter) {
-      case TodoFilter.active:
-        return todos.where((todo) => !todo.isCompleted).toList();
-      case TodoFilter.completed:
-        return todos.where((todo) => todo.isCompleted).toList();
-      case TodoFilter.all:
-        return todos;
-    }
+    return (category==Category.all)
+        ? todos.where((todo) => todo.isCompleted==showHistory).toList()
+        : todos.where((todo) => todo.isCompleted==showHistory && todo.category==category).toList();
   }
-}
-
-class TodoLoaded extends TodoState {
-  final Todo todo;
-
-  TodoLoaded({required this.todo});
 }
 
 class TodoError extends TodoState {

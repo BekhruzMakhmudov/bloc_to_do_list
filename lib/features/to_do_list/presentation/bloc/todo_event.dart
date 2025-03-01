@@ -3,15 +3,13 @@ part of 'todo_bloc.dart';
 abstract class TodoEvent {}
 
 class GetTodosEvent extends TodoEvent {
-  final TodoFilter filter;
+  final bool showHistory;
+  final Category category;
 
-  GetTodosEvent({this.filter = TodoFilter.all});
-}
-
-class GetTodoByIdEvent extends TodoEvent {
-  final String id;
-
-  GetTodoByIdEvent({required this.id});
+  GetTodosEvent({
+    this.showHistory = false,
+    this.category = Category.all,
+  });
 }
 
 class AddTodoEvent extends TodoEvent {
@@ -24,16 +22,4 @@ class DeleteTodoEvent extends TodoEvent {
   final String id;
 
   DeleteTodoEvent({required this.id});
-}
-
-class ToggleTodoEvent extends TodoEvent {
-  final Todo todo;
-
-  ToggleTodoEvent({required this.todo});
-}
-
-class ChangeFilterEvent extends TodoEvent {
-  final TodoFilter filter;
-
-  ChangeFilterEvent({required this.filter});
 }

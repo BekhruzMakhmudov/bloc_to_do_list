@@ -15,7 +15,7 @@ Future<void> initDependencies() async {
   final appDir = await getApplicationDocumentsDirectory();
   Hive.init(appDir.path);
   Hive.registerAdapter(TodoModelAdapter());
-  final todoBox = await Hive.openBox<TodoModel>('todos');
+  final todoBox = await Hive.openBox<TodoModel>('todo_list');
   sl.registerLazySingleton<Box<TodoModel>>(() => todoBox);
 
   sl.registerLazySingleton<TodoLocalDataSource>(
@@ -25,13 +25,11 @@ Future<void> initDependencies() async {
         () => TodoRepositoryImpl(localDataSource: sl()),
   );
   sl.registerLazySingleton(() => GetTodos(sl()));
-  sl.registerLazySingleton(() => GetTodoById(sl()));
   sl.registerLazySingleton(() => AddTodo(sl()));
   sl.registerLazySingleton(() => DeleteTodo(sl()));
   sl.registerFactory(
         () => TodoBloc(
       getTodos: sl(),
-      getTodoById: sl(),
       addTodo: sl(),
       deleteTodo: sl(),
     ),

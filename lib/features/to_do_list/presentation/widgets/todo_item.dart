@@ -1,3 +1,4 @@
+import 'package:bloc_to_do_list/features/to_do_list/domain/entities/category.dart';
 import 'package:bloc_to_do_list/features/to_do_list/domain/entities/priority.dart';
 import 'package:bloc_to_do_list/features/to_do_list/domain/entities/todo.dart';
 import 'package:flutter/material.dart';
@@ -19,15 +20,23 @@ class ToDoItem extends StatelessWidget {
         value: toDo.isCompleted,
         onChanged: (newValue) {
           context.read<TodoBloc>().add(
-                ToggleTodoEvent(todo: toDo),
+                AddTodoEvent(
+                  todo: toDo.copyWith(isCompleted: true),
+                ),
               );
         },
         controlAffinity: ListTileControlAffinity.leading,
-        title: Text(
-          toDo.title,
-          style: TextStyle(
-            decoration: toDo.isCompleted ? TextDecoration.lineThrough : null,
-          ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              toDo.category.name,
+              style: TextStyle(
+                decoration: toDo.isCompleted ? TextDecoration.lineThrough : null,
+              ),
+            ),
+            Icon(toDo.category.icon),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

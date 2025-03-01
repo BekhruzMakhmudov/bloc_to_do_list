@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 
+import '../../domain/entities/category.dart';
 import '../../domain/entities/priority.dart';
 import '../../domain/entities/todo.dart';
 
@@ -11,7 +12,7 @@ class TodoModel {
   final String id;
 
   @HiveField(1)
-  final String title;
+  final int categoryIndex;
 
   @HiveField(2)
   final String description;
@@ -27,7 +28,7 @@ class TodoModel {
 
   TodoModel({
     required this.id,
-    required this.title,
+    required this.categoryIndex,
     required this.description,
     required this.isCompleted,
     required this.createdAt,
@@ -37,7 +38,7 @@ class TodoModel {
   factory TodoModel.fromEntity(Todo todo) {
     return TodoModel(
       id: todo.id,
-      title: todo.title,
+      categoryIndex: todo.category.index,
       description: todo.description,
       isCompleted: todo.isCompleted,
       createdAt: todo.createdAt,
@@ -48,7 +49,7 @@ class TodoModel {
   Todo toEntity() {
     return Todo(
       id: id,
-      title: title,
+      category: Category.values[categoryIndex],
       description: description,
       isCompleted: isCompleted,
       createdAt: createdAt,
